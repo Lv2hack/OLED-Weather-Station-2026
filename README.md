@@ -43,8 +43,11 @@ Wi-Fi network, restart, factory reset.
 ## Hardware
 
 - WeMos/LOLIN D1 mini (ESP8266)
-- 2.42" 128x64 OLED, SSD1309, I2C: SDA on D3, SCL on D2, reset on D6
+- 2.42" 128x64 OLED, SSD1309, I2C: SDA on D3, SCL on D2 (reset on D6 for 7-pin displays)
 - Push button from D7 to GND
+
+**[BUILD.md](BUILD.md)** has the parts list, wiring diagram, software setup and troubleshooting.
+A 3D-printed case is coming.
 
 ## Building
 
