@@ -7,6 +7,10 @@
 //  high/low and highest chance of precipitation, and the location's UTC
 //  offset (with daylight saving applied), which the clock uses.
 //
+//  Copyright (c) 2026 Alex Tatistcheff
+//  PolyForm Noncommercial License 1.0.0 (see LICENSE.md): free to use and change,
+//  not for commercial use. Third-party parts: see THIRD-PARTY.md.
+//
 // -------------------------------------------------------------------------
 
 #pragma once

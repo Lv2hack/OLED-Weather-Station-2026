@@ -61,3 +61,15 @@ that includes a file system (e.g. 4MB, FS: 2MB). Libraries:
 - Polymorphic Buttons (PMButton)
 
 After the first USB upload, updates can go over Wi-Fi: pick the `oled-weather` network port in the IDE.
+
+## License
+
+You're welcome to build, use, change and share this for personal, educational or other non-commercial
+purposes. Making and selling these, or other commercial use, needs my permission.
+
+- **Code:** [PolyForm Noncommercial 1.0.0](LICENSE.md)
+- **Build guide, diagrams and case designs:** [CC BY-NC-SA 4.0](LICENSE-docs.txt)
+- **Third-party parts** (ThingPulse example code and fonts, MIT; DSEG7 font, SIL OFL; Meteocons icons)
+  keep their own licenses: see [THIRD-PARTY.md](THIRD-PARTY.md).
+
+Weather data by [Open-Meteo.com](https://open-meteo.com), whose free service is for non-commercial use.

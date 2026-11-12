@@ -10,6 +10,10 @@
 //  GET  /api/search?q=  town search
 //  POST /api/action     do=update | wifi | restart | reset
 //
+//  Copyright (c) 2026 Alex Tatistcheff
+//  PolyForm Noncommercial License 1.0.0 (see LICENSE.md): free to use and change,
+//  not for commercial use. Third-party parts: see THIRD-PARTY.md.
+//
 // -------------------------------------------------------------------------
 
 #pragma once

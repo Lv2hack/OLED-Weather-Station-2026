@@ -4,6 +4,12 @@
 //
 //  Alex Tatistcheff
 //
+//  Copyright (c) 2026 Alex Tatistcheff
+//  PolyForm Noncommercial License 1.0.0 (see LICENSE.md): free to use and change,
+//  not for commercial use. Third-party parts: see THIRD-PARTY.md.
+//  The screen layouts started from ThingPulse's ESP8266 weather station example
+//  (MIT License, Copyright (c) 2018 Daniel Eichhorn - ThingPulse).
+//
 //  A 128x64 OLED clock and weather station anyone can set up without
 //  programming. Weather from Open-Meteo (no API key).
 //

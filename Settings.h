@@ -3,6 +3,10 @@
 //  Settings.h - everything the owner can change, kept in /settings.json on
 //  the ESP's flash (LittleFS). Changed from the web page or the setup hotspot.
 //
+//  Copyright (c) 2026 Alex Tatistcheff
+//  PolyForm Noncommercial License 1.0.0 (see LICENSE.md): free to use and change,
+//  not for commercial use. Third-party parts: see THIRD-PARTY.md.
+//
 // -------------------------------------------------------------------------
 
 #pragma once
