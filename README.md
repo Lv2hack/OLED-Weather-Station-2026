@@ -7,7 +7,7 @@ Weather comes from [Open-Meteo](https://open-meteo.com) (free for non-commercial
 
 - **Time**: date and a large clock
 - **Current weather**: temperature, conditions and icon
-- **Forecast**: 3 days with high/low, chance of precipitation and icon
+- **Forecast**: 3 days with high/low, chance of precipitation and icon for the daytime (6 AM–6 PM, like the US weather service)
 
 The bottom line always shows the time and temperature.
 

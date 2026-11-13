@@ -4,8 +4,14 @@
 //  Free for non-commercial use, no API key. Plain HTTP, so no TLS on the ESP.
 //
 //  updateWeather() gets the current temperature and conditions, the daily
-//  high/low and highest chance of precipitation, and the location's UTC
-//  offset (with daylight saving applied), which the clock uses.
+//  high/low and chance of precipitation, and the location's UTC offset (with
+//  daylight saving applied), which the clock uses.
+//
+//  Chance of precipitation: the highest hourly chance between 6 AM and 6 PM local
+//  time, like the US weather service's daytime forecast. Open-Meteo's own daily
+//  value covers midnight to midnight, so rain overnight made a dry day look wet.
+//  The icon follows the same hours: the most severe hourly weather code from 6 AM
+//  to 6 PM (Open-Meteo's daily code is the most severe of the whole day).
 //
 //  Copyright (c) 2026 Alex Tatistcheff
 //  PolyForm Noncommercial License 1.0.0 (see LICENSE.md): free to use and change,
@@ -34,7 +40,7 @@ struct DayWeather {
   int dayOfWeek;      // 0 = Sunday
   float hi;
   float lo;
-  int pop;            // highest chance of precipitation, percent; -1 = unknown
+  int pop;            // highest hourly chance of precipitation 6 AM-6 PM, percent; -1 = unknown
   int code;
 };
 
@@ -113,6 +119,7 @@ bool updateWeather(bool &utcOffsetChanged) {
            "http://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f"
            "&current=temperature_2m,weather_code,is_day"
            "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max"
+           "&hourly=precipitation_probability,weather_code"
            "&timezone=auto&forecast_days=4%s",
            cfg.lat, cfg.lon, cfg.metric ? "" : "&temperature_unit=fahrenheit");
 
@@ -129,8 +136,9 @@ bool updateWeather(bool &utcOffsetChanged) {
   String body = http.getString();
   http.end();
 
-  DynamicJsonBuffer jb(2048);
-  JsonObject& root = jb.parseObject(body);
+  // Parsed in place (a char* is not copied), which saves a few KB of RAM
+  DynamicJsonBuffer jb(4096);
+  JsonObject& root = jb.parseObject((char*)body.c_str());
   if (!root.success() || !root.containsKey("daily")) {
     Serial.println("[Weather] could not read the reply");
     return false;
@@ -153,6 +161,30 @@ bool updateWeather(bool &utcOffsetChanged) {
   JsonArray& his = daily["temperature_2m_max"];
   JsonArray& los = daily["temperature_2m_min"];
   JsonArray& pops = daily["precipitation_probability_max"];
+
+  // Daytime chance of precipitation and weather from the hourly values ("2026-11-13T06:00").
+  // WMO codes rise with severity (clear, clouds, fog, drizzle, rain, snow, showers, thunder),
+  // so the highest code is the worst weather.
+  const uint8_t DAYS = FORECAST_DAYS + 1;
+  int dayPop[DAYS], dayCode[DAYS];
+  for (uint8_t d = 0; d < DAYS; d++) dayPop[d] = dayCode[d] = -1;
+  JsonArray& hourTimes = root["hourly"]["time"];
+  JsonArray& hourPops = root["hourly"]["precipitation_probability"];
+  JsonArray& hourCodes = root["hourly"]["weather_code"];
+  for (size_t i = 0; i < hourTimes.size(); i++) {
+    const char* t = hourTimes[i] | "";
+    if (strlen(t) < 13) continue;
+    int hour = atoi(t + 11);
+    if (hour < 6 || hour >= 18) continue;
+    for (uint8_t d = 0; d < DAYS; d++) {
+      const char* date = dates[d] | "";
+      if (strncmp(t, date, 10) == 0) {
+        if (hourPops[i].is<int>()) dayPop[d] = max(dayPop[d], hourPops[i].as<int>());
+        if (hourCodes[i].is<int>()) dayCode[d] = max(dayCode[d], hourCodes[i].as<int>());
+        break;
+      }
+    }
+  }
   for (uint8_t i = 0; i < FORECAST_DAYS; i++) {
     uint8_t d = first + i;
     DayWeather &day = forecastDays[i];
@@ -162,8 +194,9 @@ bool updateWeather(bool &utcOffsetChanged) {
     day.dayOfWeek = dayOfWeek(atoi(date), atoi(date + 5), atoi(date + 8));
     day.hi = his[d].as<float>();
     day.lo = los[d].as<float>();
-    day.pop = pops[d].success() ? pops[d].as<int>() : -1;
-    day.code = codes[d] | -1;
+    if (dayPop[d] >= 0) day.pop = dayPop[d];
+    else day.pop = pops[d].is<int>() ? pops[d].as<int>() : -1;   // no hourly values: whole day
+    day.code = dayCode[d] >= 0 ? dayCode[d] : (codes[d] | -1);    // no hourly values: whole day
   }
 
   int32_t offset = root["utc_offset_seconds"] | cfg.utcOffset;

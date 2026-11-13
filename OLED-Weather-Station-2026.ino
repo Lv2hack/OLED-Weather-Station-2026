@@ -27,7 +27,12 @@
 //  History:  12/6/20  Started from the ThingPulse OLED weather demo
 //            11/12/26 2026 version: settings page, Open-Meteo, set up from a phone,
 //                     time zone from the weather location, night dimming,
-//                     scroll direction and screen order, OTA updates
+//                     scroll direction and screen order, OTA updates.
+//                     Same day: exact screen timing, time zone fix, night
+//                     options No change / Dim / Screen off (blinking dot)
+//            11/13/26 Forecast rain chance and icon use the daytime hours only
+//                     (6 AM-6 PM, like the US weather service), so overnight
+//                     rain no longer makes a dry day look wet
 //
 // -------------------------------------------------------------------------
 
